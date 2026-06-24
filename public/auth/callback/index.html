@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>로그인 처리 중 - 세이브몰</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: #1a1a1a;
+      text-align: center;
+      padding: 24px;
+    }
+    .icon { font-size: 48px; margin-bottom: 20px; }
+    h1 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #111; }
+    p { font-size: 14px; color: #888; line-height: 1.6; }
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #e5e7eb;
+      border-top-color: #3b82f6;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 20px auto 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-box {
+      display: none;
+      margin-top: 24px;
+      padding: 16px;
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      border-radius: 10px;
+      font-size: 13px;
+      color: #b91c1c;
+      max-width: 320px;
+    }
+  </style>
+</head>
+<body>
+  <div class="icon">🐷</div>
+  <h1>로그인 처리 중입니다</h1>
+  <p>잠시만 기다려주세요.<br />세이브몰로 이동합니다.</p>
+  <div class="spinner" id="spinner"></div>
+  <div class="error-box" id="errorBox"></div>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var code = params.get('code');
+      var error = params.get('error');
+      var errorDesc = params.get('error_description');
+
+      if (error) {
+        document.getElementById('spinner').style.display = 'none';
+        var box = document.getElementById('errorBox');
+        box.style.display = 'block';
+        box.textContent = errorDesc || error || '로그인 중 오류가 발생했습니다.';
+        return;
+      }
+
+      // 향후 백엔드 API 연동 시 이 부분에서 code를 서버로 전달합니다.
+      // 현재 MVP: code를 sessionStorage에 저장 후 메인 앱으로 이동
+      if (code) {
+        try { sessionStorage.setItem('toss_auth_code', code); } catch (e) {}
+      }
+
+      setTimeout(function () {
+        window.location.replace('/');
+      }, 800);
+    })();
+  </script>
+</body>
+</html>
